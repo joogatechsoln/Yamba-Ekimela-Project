@@ -1,0 +1,122 @@
+[
+  {
+    "id": "dealer-kla-001",
+    "businessName": "Bukoola Chemical Industries Limited",
+    "ownerName": "Customer Support",
+    "district": "Kampala",
+    "phoneNumber": "+256800300803",
+    "email": "info@bukoolachemicals.com",
+    "openHours": "Mon-Sat, 8:00 AM - 5:00 PM",
+    "deliveryOptions": ["Pickup", "Boda delivery", "Truck transport"],
+    "availableDrugs": ["Mancozeb", "Copper Oxychloride", "Striker", "Indofil"],
+    "expertise": ["coffee berry disease", "banana bacterial wilt", "late blight"]
+  },
+  {
+    "id": "dealer-aru-002",
+    "businessName": "Omia Agribusiness Development Group",
+    "ownerName": "Management Team",
+    "district": "Arua City",
+    "phoneNumber": "+256773628770",
+    "email": "oadgltd@gmail.com",
+    "openHours": "Mon-Sat, 8:30 AM - 6:00 PM",
+    "deliveryOptions": ["Pickup", "West Nile regional dispatch"],
+    "availableDrugs": ["Glyphosate", "Imidacloprid", "Fungicides", "Improved Seeds"],
+    "expertise": ["tobacco pests", "cereal rust", "cassava brown streak disease"]
+  },
+  {
+    "id": "dealer-mbl-003",
+    "businessName": "Christ The King Agro-Dealers Ltd",
+    "ownerName": "Wanyira Denis",
+    "district": "Mbale City",
+    "phoneNumber": "+256770569464",
+    "email": "info@christthekingagro.com",
+    "openHours": "Mon-Sat, 8:00 AM - 6:00 PM",
+    "deliveryOptions": ["Pickup", "Boda delivery", "Taxi park parcel"],
+    "availableDrugs": ["Mancozeb", "Copper Fungicide", "Cymoxanil", "Dudu-Cyphenthrin"],
+    "expertise": ["coffee rust", "tomato late blight", "cabbage black rot"]
+  },
+  {
+    "id": "dealer-mbar-004",
+    "businessName": "AD Agrodealers (Ankole Mall)",
+    "ownerName": "Mbarara Branch Manager",
+    "district": "Mbarara City",
+    "phoneNumber": "+256730422328",
+    "email": "contact@adagrodealers.co.ug",
+    "openHours": "Mon-Sat, 7:30 AM - 6:30 PM",
+    "deliveryOptions": ["Pickup", "Western bus parcel", "Boda delivery"],
+    "availableDrugs": ["Copper Oxychloride", "Alpha-cypermethrin", "Fertilizers"],
+    "expertise": ["banana bacterial wilt", "coffee berry disease", "livestock acaricides"]
+  },
+  {
+    "id": "dealer-gl-005",
+    "businessName": "Gulu Agricultural Development Co (GADC)",
+    "ownerName": "Bruce Robertson",
+    "district": "Gulu City",
+    "phoneNumber": "+256800333700",
+    "email": "gnadongo@gadc.co.ug",
+    "openHours": "Mon-Fri, 8:00 AM - 5:00 PM",
+    "deliveryOptions": ["Pickup", "Bulk truck delivery", "Farmer training center"],
+    "availableDrugs": ["Organic pesticides", "Cotton protection chemicals", "Seed treatments"],
+    "expertise": ["cotton pests", "maize lethal necrosis", "organic certification"]
+  },
+  {
+    "id": "dealer-jna-006",
+    "businessName": "AgroWays (U) Limited",
+    "ownerName": "Herbert Kyeyamwa",
+    "district": "Jinja",
+    "phoneNumber": "+256434660419",
+    "email": "info@agroways.ug",
+    "openHours": "Mon-Sat, 8:00 AM - 5:00 PM",
+    "deliveryOptions": ["Pickup", "Grain bulking transport", "Boda delivery"],
+    "availableDrugs": ["Post-harvest treatments", "Maize fungicides", "Fertilizers"],
+    "expertise": ["grain storage pests", "maize rust", "soil nutrition"]
+  },
+  {
+    "id": "dealer-kbl-007",
+    "businessName": "Green Firm Africa Ltd (Kabale)",
+    "ownerName": "Twikirize Eunice",
+    "district": "Kabale",
+    "phoneNumber": "+256782527454",
+    "email": "info@greenfirmafrica.com",
+    "openHours": "Mon-Sat, 8:30 AM - 6:00 PM",
+    "deliveryOptions": ["Pickup", "Boda delivery"],
+    "availableDrugs": ["Potato fungicides", "Metalaxyl", "Vegetable seeds"],
+    "expertise": ["potato late blight", "apple scab", "vegetable damping off"]
+  },
+  {
+    "id": "dealer-fp-008",
+    "businessName": "Prima Farmers Enterprises Limited",
+    "ownerName": "Branch Management",
+    "district": "Fort Portal",
+    "phoneNumber": "+256701680621",
+    "email": "primafarmers@gmail.com",
+    "openHours": "Mon-Sat, 8:00 AM - 5:30 PM",
+    "deliveryOptions": ["Pickup", "Western regional transit"],
+    "availableDrugs": ["Copper treatments", "Insecticides", "Fertilizers"],
+    "expertise": ["tea pests", "passion fruit wilt", "citrus greening"]
+  },
+  {
+    "id": "dealer-srt-009",
+    "businessName": "Agro One Limited",
+    "ownerName": "Eligu Robert",
+    "district": "Soroti",
+    "phoneNumber": "+256778689773",
+    "email": "agroone.soroti@gmail.com",
+    "openHours": "Mon-Sat, 8:00 AM - 6:00 PM",
+    "deliveryOptions": ["Pickup", "Eastern bus parcel"],
+    "availableDrugs": ["Groundnut chemicals", "Cypermethrin", "Mancozeb"],
+    "expertise": ["groundnut rosette virus", "sorghum midge", "cereal smut"]
+  },
+  {
+    "id": "dealer-lra-010",
+    "businessName": "Opsel Farm Supply",
+    "ownerName": "Opori Geofrey Okello",
+    "district": "Lira City",
+    "phoneNumber": "+256414567368",
+    "email": "opselsupplies@gmail.com",
+    "openHours": "Mon-Sat, 8:30 AM - 5:30 PM",
+    "deliveryOptions": ["Pickup", "Northern transit trucks", "Boda delivery"],
+    "availableDrugs": ["Metalaxyl", "Glyphosate", "Sulfur powder", "Insecticides"],
+    "expertise": ["sunflower pests", "soybean rust", "fall armyworm"]
+  }
+]
