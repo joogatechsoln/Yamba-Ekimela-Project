@@ -13,12 +13,17 @@ $$;
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
+  owner_name text,
+  business_name text,
   email text,
   role text not null default 'farmer',
   preferred_language text default 'en',
   phone_number text,
   district text,
+  open_hours text,
+  delivery_options text[] not null default '{}',
   available_drugs text[] not null default '{}',
+  expertise text[] not null default '{}',
   avatar_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -26,12 +31,17 @@ create table if not exists public.profiles (
 
 alter table public.profiles
   add column if not exists full_name text,
+  add column if not exists owner_name text,
+  add column if not exists business_name text,
   add column if not exists email text,
   add column if not exists role text default 'farmer',
   add column if not exists preferred_language text default 'en',
   add column if not exists phone_number text,
   add column if not exists district text,
+  add column if not exists open_hours text,
+  add column if not exists delivery_options text[] default '{}',
   add column if not exists available_drugs text[] default '{}',
+  add column if not exists expertise text[] default '{}',
   add column if not exists avatar_url text,
   add column if not exists created_at timestamptz default now(),
   add column if not exists updated_at timestamptz default now();
@@ -46,31 +56,77 @@ begin
   insert into public.profiles (
     id,
     full_name,
+    owner_name,
+    business_name,
     email,
     role,
     preferred_language,
     phone_number,
     district,
-    available_drugs
+    open_hours,
+    delivery_options,
+    available_drugs,
+    expertise
   )
   values (
     new.id,
     new.raw_user_meta_data ->> 'full_name',
+    coalesce(
+      new.raw_user_meta_data ->> 'owner_name',
+      new.raw_user_meta_data ->> 'full_name'
+    ),
+    coalesce(
+      new.raw_user_meta_data ->> 'business_name',
+      new.raw_user_meta_data ->> 'full_name'
+    ),
     new.email,
     coalesce(new.raw_user_meta_data ->> 'role', 'farmer'),
     coalesce(new.raw_user_meta_data ->> 'preferred_language', 'en'),
     new.raw_user_meta_data ->> 'phone_number',
     new.raw_user_meta_data ->> 'district',
-    '{}'::text[]
+    new.raw_user_meta_data ->> 'open_hours',
+    coalesce(
+      (
+        select array_agg(value)
+        from jsonb_array_elements_text(
+          coalesce(new.raw_user_meta_data -> 'delivery_options', '[]'::jsonb)
+        ) as value
+      ),
+      '{}'::text[]
+    ),
+    coalesce(
+      (
+        select array_agg(value)
+        from jsonb_array_elements_text(
+          coalesce(new.raw_user_meta_data -> 'available_drugs', '[]'::jsonb)
+        ) as value
+      ),
+      '{}'::text[]
+    ),
+    coalesce(
+      (
+        select array_agg(value)
+        from jsonb_array_elements_text(
+          coalesce(new.raw_user_meta_data -> 'expertise', '[]'::jsonb)
+        ) as value
+      ),
+      '{}'::text[]
+    )
   )
   on conflict (id) do update
   set
     full_name = excluded.full_name,
+    owner_name = excluded.owner_name,
+    business_name = excluded.business_name,
     email = excluded.email,
     role = excluded.role,
     preferred_language = excluded.preferred_language,
     phone_number = excluded.phone_number,
     district = excluded.district,
+    open_hours = excluded.open_hours,
+    delivery_options = excluded.delivery_options,
+    available_drugs = excluded.available_drugs,
+    expertise = excluded.expertise,
     updated_at = now();
 
   return new;
@@ -107,8 +163,12 @@ create table if not exists public.dealer_messages (
   sender_id uuid not null references auth.users(id) on delete cascade,
   receiver_id uuid not null references auth.users(id) on delete cascade,
   message text not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  read_at timestamptz
 );
+
+alter table public.dealer_messages
+  add column if not exists read_at timestamptz;
 
 create index if not exists idx_profiles_role on public.profiles(role);
 create index if not exists idx_dealer_threads_farmer_id on public.dealer_threads(farmer_id);
@@ -116,6 +176,8 @@ create index if not exists idx_dealer_threads_dealer_id on public.dealer_threads
 create index if not exists idx_dealer_threads_updated_at on public.dealer_threads(updated_at desc);
 create index if not exists idx_dealer_messages_thread_id on public.dealer_messages(thread_id);
 create index if not exists idx_dealer_messages_created_at on public.dealer_messages(created_at);
+create index if not exists idx_dealer_messages_receiver_read_at
+on public.dealer_messages(receiver_id, read_at);
 
 drop trigger if exists dealer_threads_set_updated_at on public.dealer_threads;
 
@@ -206,6 +268,14 @@ with check (
       and (t.farmer_id = auth.uid() or t.dealer_id = auth.uid())
   )
 );
+
+drop policy if exists "receivers mark messages as read" on public.dealer_messages;
+create policy "receivers mark messages as read"
+on public.dealer_messages
+for update
+to authenticated
+using (auth.uid() = receiver_id)
+with check (auth.uid() = receiver_id);
 
 insert into storage.buckets (id, name, public)
 values

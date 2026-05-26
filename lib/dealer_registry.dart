@@ -37,18 +37,28 @@ class DrugDealer {
       id: json['id']?.toString() ?? '',
       accountId: json['accountId']?.toString(),
       businessName: json['businessName']?.toString() ?? '',
-      ownerName: json['ownerName']?.toString() ?? '',
+      ownerName:
+          json['ownerName']?.toString() ?? json['full_name']?.toString() ?? '',
       district: json['district']?.toString() ?? '',
-      phoneNumber: json['phoneNumber']?.toString() ?? '',
+      phoneNumber: json['phoneNumber']?.toString() ??
+          json['phone_number']?.toString() ??
+          '',
       email: json['email']?.toString() ?? '',
-      openHours: json['openHours']?.toString() ?? '',
-      deliveryOptions: (json['deliveryOptions'] as List<dynamic>? ?? const [])
+      openHours:
+          json['openHours']?.toString() ?? json['open_hours']?.toString() ?? '',
+      deliveryOptions: (json['deliveryOptions'] as List<dynamic>? ??
+              json['delivery_options'] as List<dynamic>? ??
+              const [])
           .map((item) => item.toString())
           .toList(),
-      availableDrugs: (json['availableDrugs'] as List<dynamic>? ?? const [])
+      availableDrugs: (json['availableDrugs'] as List<dynamic>? ??
+              json['available_drugs'] as List<dynamic>? ??
+              const [])
           .map((item) => item.toString())
           .toList(),
-      expertise: (json['expertise'] as List<dynamic>? ?? const [])
+      expertise: (json['expertise'] as List<dynamic>? ??
+              json['expertise'] as List<dynamic>? ??
+              const [])
           .map((item) => item.toString())
           .toList(),
     );
@@ -71,38 +81,42 @@ class DealerRegistry {
     try {
       final response = await Supabase.instance.client
           .from('profiles')
-          .select('id,full_name,district,phone_number,available_drugs,role')
+          .select(
+            'id,full_name,owner_name,business_name,district,phone_number,email,open_hours,delivery_options,available_drugs,expertise,role',
+          )
           .eq('role', AppServices.dealerRole);
 
       final remoteDealers = (response as List<dynamic>)
           .whereType<Map>()
           .map((item) => Map<String, dynamic>.from(item))
           .map((item) {
-            final fullName = item['full_name']?.toString() ?? '';
-            final availableDrugs =
-                (item['available_drugs'] as List<dynamic>? ?? const [])
-                    .map((entry) => entry.toString())
-                    .toList();
+        return DrugDealer.fromJson({
+          'id': item['id'],
+          'accountId': item['id'],
+          'businessName':
+              item['business_name'] ?? item['full_name'] ?? 'Registered Agro Medic',
+          'ownerName': item['owner_name'] ?? item['full_name'] ?? '',
+          'district': item['district'] ?? 'Uganda',
+          'phoneNumber': item['phone_number'] ?? '',
+          'email': item['email'] ?? '',
+          'openHours':
+              item['open_hours'] ??
+                  'Contact Agro Medic in chat for working hours',
+          'deliveryOptions':
+              item['delivery_options'] ?? const ['Chat to confirm delivery'],
+          'availableDrugs': item['available_drugs'] ?? const [],
+          'expertise': item['expertise'] ?? const [],
+        });
+      }).toList();
 
-            return DrugDealer(
-              id: item['id']?.toString() ?? '',
-              accountId: item['id']?.toString(),
-              businessName: fullName.isNotEmpty
-                  ? '$fullName Agro Support'
-                  : 'Registered Dealer',
-              ownerName: fullName.isNotEmpty ? fullName : 'Registered Dealer',
-              district: item['district']?.toString() ?? 'Uganda',
-              phoneNumber: item['phone_number']?.toString() ?? '',
-              email: '',
-              openHours: 'Contact dealer in chat for working hours',
-              deliveryOptions: const ['Chat to confirm delivery'],
-              availableDrugs: availableDrugs,
-              expertise: availableDrugs,
-            );
-          })
-          .toList();
-
-      return [...remoteDealers, ...fallbackDealers];
+      final dealersById = <String, DrugDealer>{};
+      for (final dealer in fallbackDealers) {
+        dealersById[dealer.id] = dealer;
+      }
+      for (final dealer in remoteDealers) {
+        dealersById[dealer.id] = dealer;
+      }
+      return dealersById.values.toList();
     } catch (_) {
       return fallbackDealers;
     }
@@ -127,7 +141,8 @@ class DealerRegistry {
 
       for (final tag in dealer.expertise) {
         final normalizedTag = tag.toLowerCase();
-        if (disease.contains(normalizedTag) || treatment.contains(normalizedTag)) {
+        if (disease.contains(normalizedTag) ||
+            treatment.contains(normalizedTag)) {
           score += 2;
         }
       }
@@ -145,7 +160,8 @@ class DealerRegistry {
       return a.key.businessName.compareTo(b.key.businessName);
     });
 
-    final matched = scored.where((entry) => entry.value > 0).map((e) => e.key).toList();
+    final matched =
+        scored.where((entry) => entry.value > 0).map((e) => e.key).toList();
     if (matched.isNotEmpty) {
       return matched;
     }

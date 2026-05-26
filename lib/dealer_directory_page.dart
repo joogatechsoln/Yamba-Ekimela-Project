@@ -66,7 +66,7 @@ class _DealerDirectoryPageState extends State<DealerDirectoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(language.text('Drug Dealers')),
+        title: Text(language.text('Agro Medics')),
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
       ),
@@ -109,7 +109,7 @@ class _DealerDirectoryPageState extends State<DealerDirectoryPage> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text('${dealer.ownerName} • ${dealer.district}'),
+                    Text('${dealer.ownerName} - ${dealer.district}'),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 8,
@@ -127,7 +127,7 @@ class _DealerDirectoryPageState extends State<DealerDirectoryPage> {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                drug,
+                                language.text(drug),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: Color(0xFF2E7D32),
@@ -139,12 +139,12 @@ class _DealerDirectoryPageState extends State<DealerDirectoryPage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '${language.text('Delivery')}: ${dealer.deliveryOptions.join(', ')}',
+                      '${language.text('Delivery')}: ${dealer.deliveryOptions.map(language.text).join(', ')}',
                       style: TextStyle(color: Colors.grey.shade700),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${language.text('Hours')}: ${dealer.openHours}',
+                      '${language.text('Hours')}: ${language.text(dealer.openHours)}',
                       style: TextStyle(color: Colors.grey.shade700),
                     ),
                     const SizedBox(height: 14),
@@ -153,7 +153,7 @@ class _DealerDirectoryPageState extends State<DealerDirectoryPage> {
                       child: ElevatedButton.icon(
                         onPressed: () => _callDealer(dealer),
                         icon: const Icon(Icons.call_rounded),
-                        label: Text(language.text('Call Dealer')),
+                        label: Text(language.text('Call Agro Medic')),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF4CAF50),
                           foregroundColor: Colors.white,

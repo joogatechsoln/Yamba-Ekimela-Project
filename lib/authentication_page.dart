@@ -280,7 +280,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                             ),
                             DropdownMenuItem(
                               value: AppServices.dealerRole,
-                              child: Text(language.text('Drug dealer')),
+                              child: Text(language.text('Agro medic')),
                             ),
                           ],
                           onChanged: (value) {

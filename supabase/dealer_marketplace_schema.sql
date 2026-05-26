@@ -16,8 +16,21 @@ create table if not exists public.dealer_messages (
   sender_id uuid not null references auth.users(id) on delete cascade,
   receiver_id uuid not null references auth.users(id) on delete cascade,
   message text not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  read_at timestamptz
 );
+
+alter table public.dealer_messages
+  add column if not exists read_at timestamptz;
+
+alter table public.profiles
+  add column if not exists full_name text;
+
+alter table public.profiles
+  add column if not exists owner_name text;
+
+alter table public.profiles
+  add column if not exists business_name text;
 
 alter table public.profiles
   add column if not exists role text default 'farmer';
@@ -29,7 +42,16 @@ alter table public.profiles
   add column if not exists district text;
 
 alter table public.profiles
+  add column if not exists open_hours text;
+
+alter table public.profiles
+  add column if not exists delivery_options text[] default '{}';
+
+alter table public.profiles
   add column if not exists available_drugs text[] default '{}';
+
+alter table public.profiles
+  add column if not exists expertise text[] default '{}';
 
 alter table public.dealer_threads enable row level security;
 alter table public.dealer_messages enable row level security;
@@ -88,6 +110,15 @@ with check (
       and (t.farmer_id = auth.uid() or t.dealer_id = auth.uid())
   )
 );
+
+drop policy if exists "receivers mark messages as read"
+on public.dealer_messages;
+
+create policy "receivers mark messages as read"
+on public.dealer_messages
+for update
+using (auth.uid() = receiver_id)
+with check (auth.uid() = receiver_id);
 
 insert into storage.buckets (id, name, public)
 values ('diagnosis-images', 'diagnosis-images', false)

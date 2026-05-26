@@ -57,6 +57,7 @@ app.*.map.json
 .env
 .env.*
 lib/supabase_config.local.dart
+dart_defines.local.json
 
 # Local logs / crash dumps
 hs_err_pid*

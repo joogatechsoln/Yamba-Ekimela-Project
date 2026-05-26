@@ -39,6 +39,13 @@ class _DealerChatPageState extends State<DealerChatPage> {
   bool _creatingThread = false;
   String? _error;
 
+  String _normalizeErrorMessage(Object error) {
+    final message = error.toString();
+    return message.startsWith('Exception:')
+        ? message.substring('Exception:'.length).trim()
+        : message;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,7 +83,7 @@ class _DealerChatPageState extends State<DealerChatPage> {
       _receiverId = thread.dealerId;
       await _loadDiagnosisPreview(storagePath: thread.diagnosisImagePath);
     } catch (e) {
-      setState(() => _error = e.toString());
+      setState(() => _error = _normalizeErrorMessage(e));
     } finally {
       if (mounted) {
         setState(() => _creatingThread = false);
@@ -137,8 +144,12 @@ class _DealerChatPageState extends State<DealerChatPage> {
       }
     } catch (e) {
       if (!mounted) return;
+      final language = AppLanguageScope.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), behavior: SnackBarBehavior.floating),
+        SnackBar(
+          content: Text(language.text(_normalizeErrorMessage(e))),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
@@ -154,8 +165,9 @@ class _DealerChatPageState extends State<DealerChatPage> {
   Widget build(BuildContext context) {
     final language = AppLanguageScope.of(context);
     final title = widget.dealer?.businessName ??
-        widget.readOnlyTitle ??
-        language.text('Dealer Chat');
+        (widget.readOnlyTitle != null
+            ? language.text(widget.readOnlyTitle!)
+            : language.text('Dealer Chat'));
 
     return Scaffold(
       appBar: AppBar(
@@ -175,7 +187,7 @@ class _DealerChatPageState extends State<DealerChatPage> {
                 children: [
                   if (widget.diseaseName != null)
                     Text(
-                      '${language.text('Diagnosis')}: ${widget.diseaseName}',
+                      '${language.text('Diagnosis')}: ${language.text(widget.diseaseName!)}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF1F5D2A),
@@ -184,7 +196,7 @@ class _DealerChatPageState extends State<DealerChatPage> {
                   if (widget.recommendedDrugs != null) ...[
                     const SizedBox(height: 8),
                     Text(
-                      '${language.text('Recommended drug')}: ${widget.recommendedDrugs}',
+                      '${language.text('Recommended drug')}: ${language.text(widget.recommendedDrugs!)}',
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Color(0xFF375A3F)),
@@ -213,7 +225,7 @@ class _DealerChatPageState extends State<DealerChatPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(24),
                           child: Text(
-                            _error!,
+                            language.text(_error!),
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: Colors.redAccent),
                           ),

@@ -276,7 +276,7 @@ class _ResultsPageState extends State<ResultsPage>
         SnackBar(
           content: Text(
             language.text(
-              'This dealer can be called now. Add a registered dealer account to enable in-app chat.',
+              'This Agro Medic can be called now. Add a registered Agro Medic account to enable in-app chat.',
             ),
           ),
           behavior: SnackBarBehavior.floating,
@@ -832,7 +832,7 @@ class _ResultsPageState extends State<ResultsPage>
 
     if (_matchedDealers.isEmpty) {
       return _buildInfoCard(
-        language.text('Drug Dealers'),
+        language.text('Agro Medics'),
         language.text(
           'No matching dealer was found from the current treatment list. Open the dealer directory from home or scan again after updating treatment data.',
         ),
@@ -869,7 +869,7 @@ class _ResultsPageState extends State<ResultsPage>
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  language.text('Call or Message Drug Dealers'),
+                  language.text('Call or Message Agro Medics'),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -925,7 +925,7 @@ class _ResultsPageState extends State<ResultsPage>
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
-                              drug,
+                              language.text(drug),
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Color(0xFF2E7D32),
@@ -937,7 +937,7 @@ class _ResultsPageState extends State<ResultsPage>
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '${language.text('Delivery')}: ${dealer.deliveryOptions.join(', ')}',
+                    '${language.text('Delivery')}: ${dealer.deliveryOptions.map(language.text).join(', ')}',
                     style: TextStyle(color: Colors.grey.shade700),
                   ),
                   const SizedBox(height: 14),

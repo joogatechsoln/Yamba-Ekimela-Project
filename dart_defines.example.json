@@ -1,0 +1,8 @@
+{
+  "SUPABASE_URL": "https://your-project.supabase.co",
+  "SUPABASE_ANON_KEY": "your-supabase-anon-key",
+  "OPENWEATHER_API_KEY": "your-openweather-api-key",
+  "RAPID_TRANSLATE_API_KEY": "your-rapidapi-key",
+  "RAPID_TRANSLATE_HOST": "deep-translate1.p.rapidapi.com",
+  "RAPID_TRANSLATE_URL": "https://deep-translate1.p.rapidapi.com/language/translate/v2"
+}

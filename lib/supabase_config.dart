@@ -1,8 +1,4 @@
-/// Optional local fallback for Supabase credentials when `--dart-define`
-/// values are not provided.
-///
-/// Prefer passing secrets with `--dart-define` for GitHub-safe builds.
-/// If you want local fallback values for development, add them here on your
-/// machine without committing them.
+/// Keep committed fallbacks empty so credentials are supplied only via
+/// `--dart-define` at build/run time.
 const String supabaseUrl = '';
 const String supabaseAnonKey = '';

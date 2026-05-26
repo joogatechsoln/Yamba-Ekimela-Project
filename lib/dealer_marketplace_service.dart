@@ -50,6 +50,7 @@ class DealerMessage {
     required this.receiverId,
     required this.message,
     required this.createdAt,
+    this.readAt,
   });
 
   final String id;
@@ -58,6 +59,7 @@ class DealerMessage {
   final String receiverId;
   final String message;
   final DateTime createdAt;
+  final DateTime? readAt;
 
   factory DealerMessage.fromJson(Map<String, dynamic> json) {
     return DealerMessage(
@@ -68,6 +70,7 @@ class DealerMessage {
       message: json['message']?.toString() ?? '',
       createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
+      readAt: DateTime.tryParse(json['read_at']?.toString() ?? ''),
     );
   }
 }
@@ -80,7 +83,7 @@ class DealerMarketplaceService {
   static String get currentUserId {
     final userId = _client.auth.currentUser?.id;
     if (userId == null || userId.isEmpty) {
-      throw Exception('You need to sign in before messaging a dealer.');
+      throw Exception('You need to sign in before messaging an Agro Medic.');
     }
     return userId;
   }
@@ -95,7 +98,7 @@ class DealerMarketplaceService {
     final dealerAccountId = dealer.accountId;
     if (dealerAccountId == null || dealerAccountId.isEmpty) {
       throw Exception(
-        'This dealer can be called, but messaging needs a registered dealer account.',
+        'This Agro Medic can be called, but messaging needs a registered Agro Medic account.',
       );
     }
 
@@ -139,6 +142,55 @@ class DealerMarketplaceService {
     return thread;
   }
 
+  static Future<DealerThread> ensureGeneralThread({
+    required DrugDealer dealer,
+  }) async {
+    final farmerId = currentUserId;
+    final dealerAccountId = dealer.accountId;
+    if (dealerAccountId == null || dealerAccountId.isEmpty) {
+      throw Exception(
+        'This Agro Medic can be called, but messaging needs a registered Agro Medic account.',
+      );
+    }
+
+    final existing = await _client
+        .from('dealer_threads')
+        .select()
+        .eq('farmer_id', farmerId)
+        .eq('dealer_id', dealerAccountId)
+        .eq('disease_name', 'General inquiry')
+        .order('updated_at', ascending: false)
+        .limit(1)
+        .maybeSingle();
+
+    if (existing != null) {
+      return DealerThread.fromJson(existing);
+    }
+
+    final initialMessage =
+        'Hello, I would like to ask about your products, delivery options, and availability.';
+
+    final inserted = await _client
+        .from('dealer_threads')
+        .insert({
+          'farmer_id': farmerId,
+          'dealer_id': dealerAccountId,
+          'disease_name': 'General inquiry',
+          'recommended_drugs': 'General Agro Medic consultation',
+          'last_message': initialMessage,
+        })
+        .select()
+        .single();
+
+    final thread = DealerThread.fromJson(inserted);
+    await sendMessage(
+      threadId: thread.id,
+      receiverId: dealerAccountId,
+      message: initialMessage,
+    );
+    return thread;
+  }
+
   static Future<void> sendMessage({
     required String threadId,
     required String receiverId,
@@ -163,9 +215,17 @@ class DealerMarketplaceService {
     return _client
         .from('dealer_messages')
         .stream(primaryKey: ['id'])
-        .eq('thread_id', threadId)
-        .order('created_at')
-        .map((rows) => rows.map(DealerMessage.fromJson).toList());
+        .order('created_at', ascending: true)
+        .map(
+          (rows) {
+            final messages = rows
+                .where((row) => row['thread_id']?.toString() == threadId)
+                .map(DealerMessage.fromJson)
+                .toList()
+              ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+            return messages;
+          },
+        );
   }
 
   static Stream<List<DealerThread>> threadStream({
@@ -175,9 +235,63 @@ class DealerMarketplaceService {
     return _client
         .from('dealer_threads')
         .stream(primaryKey: ['id'])
-        .eq(key, currentUserId)
         .order('updated_at', ascending: false)
-        .map((rows) => rows.map(DealerThread.fromJson).toList());
+        .map(
+          (rows) {
+            final threads = rows
+                .where((row) => row[key]?.toString() == currentUserId)
+                .map(DealerThread.fromJson)
+                .toList()
+              ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+            return threads;
+          },
+        );
+  }
+
+  static Stream<int> unreadCountStream({
+    String? threadId,
+  }) {
+    final userId = currentUserId;
+    final stream = _client
+        .from('dealer_messages')
+        .stream(primaryKey: ['id'])
+        .order('created_at', ascending: false);
+
+    return stream.map(
+      (rows) => rows
+          .where((row) => row['receiver_id']?.toString() == userId)
+          .where(
+            (row) =>
+                threadId == null ||
+                threadId.isEmpty ||
+                row['thread_id']?.toString() == threadId,
+          )
+          .where((row) => row['read_at'] == null || row['read_at'] == '')
+          .length,
+    );
+  }
+
+  static Future<void> markThreadMessagesAsRead(String threadId) async {
+    final userId = currentUserId;
+    final rows = await _client
+        .from('dealer_messages')
+        .select('id,read_at')
+        .eq('thread_id', threadId)
+        .eq('receiver_id', userId);
+
+    final unreadIds = (rows as List<dynamic>)
+        .whereType<Map<String, dynamic>>()
+        .where((row) => row['read_at'] == null || row['read_at'] == '')
+        .map((row) => row['id']?.toString())
+        .whereType<String>()
+        .toList();
+
+    if (unreadIds.isEmpty) return;
+
+    await _client
+        .from('dealer_messages')
+        .update({'read_at': DateTime.now().toIso8601String()})
+        .inFilter('id', unreadIds);
   }
 
   static Future<String?> resolveDiagnosisImageUrl(String? storagePath) async {

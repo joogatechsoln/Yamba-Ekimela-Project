@@ -409,7 +409,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               child: Text(
                                 language.text(
                                   _userRole == AppServices.dealerRole
-                                      ? 'Drug Dealer'
+                                      ? 'Agro Medic'
                                       : 'Farmer',
                                 ),
                                 style: TextStyle(
@@ -614,7 +614,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         title: language.text(
                           _userRole == AppServices.dealerRole
                               ? 'Profile'
-                              : 'Drug Dealers',
+                              : 'Agro Medics',
                         ),
                         icon: _userRole == AppServices.dealerRole
                             ? Icons.person_rounded

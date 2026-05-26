@@ -306,6 +306,25 @@ const Map<String, String> _lugandaDefaults = {
   'Increase spacing to improve field air circulation.':
       'Yongera ebbanga wakati w’ebimera empewo esobole okuyita obulungi.',
   'Scan Crop': 'Sima ekirime',
+  'Agro medic': 'Agro medic',
+  'Agro Medic': 'Agro medic',
+  'Agro Medics': 'Abasawo b\'ebirime',
+  'Call Agro Medic': 'Kubira Agro medic',
+  'Call or Message Agro Medics': 'Kubira oba weereza Agro medics',
+  'Missing diagnosis details for this chat.':
+      'Ebikwata ku kukebera tebimala ku mboozi eno.',
+  'This Agro Medic can be called now. Add a registered Agro Medic account to enable in-app chat.':
+      'Agro Medic ono asobola okukubirwa kati. Yongera ku akawunti ya Agro Medic eyewandiisiddwa okusobozesa okwogera mu app.',
+  'You need to sign in before messaging an Agro Medic.':
+      'Weetaaga okuyingira nga tonnaweereza Agro Medic obubaka.',
+  'This Agro Medic can be called, but messaging needs a registered Agro Medic account.':
+      'Agro Medic ono asobola okukubirwa, naye obubaka bwetaaga akawunti ya Agro Medic eyewandiisiddwa.',
+  'Contact Agro Medic in chat for working hours':
+      'Yogera ne Agro Medic mu mboozi omanye essaawa z\'okukolera.',
+  'General inquiry': 'Okwebuuza okw\'awamu',
+  'General Agro Medic consultation': 'Okwebuuza okw\'awamu ne Agro Medic',
+  'Hello, I would like to ask about your products, delivery options, and availability.':
+      'Gyebale ko, njagala okubuuza ku bintu byammwe, engeri y\'okutuusa ebintu, n\'obubeerawo bwabyo.',
   'Weather': 'Obudde',
   'Profile': 'Pulafo',
   'History': 'Ebyafaayo',

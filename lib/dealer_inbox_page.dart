@@ -17,6 +17,13 @@ class DealerInboxPage extends StatefulWidget {
 class _DealerInboxPageState extends State<DealerInboxPage> {
   bool _isDealerRole = false;
 
+  String _normalizeErrorMessage(Object error) {
+    final message = error.toString();
+    return message.startsWith('Exception:')
+        ? message.substring('Exception:'.length).trim()
+        : message;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -67,7 +74,7 @@ class _DealerInboxPageState extends State<DealerInboxPage> {
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  '${language.text('Unable to load inbox.')}\n${snapshot.error}',
+                  '${language.text('Unable to load inbox.')}\n${language.text(_normalizeErrorMessage(snapshot.error!))}',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -131,7 +138,7 @@ class _DealerInboxPageState extends State<DealerInboxPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        thread.diseaseName,
+                        language.text(thread.diseaseName),
                         style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
@@ -140,7 +147,7 @@ class _DealerInboxPageState extends State<DealerInboxPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        thread.lastMessage,
+                        language.text(thread.lastMessage),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.grey.shade700),
