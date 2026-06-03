@@ -112,10 +112,13 @@ class _ResultsPageState extends State<ResultsPage>
         'assets/plant_disease_mobilenetv2_quant.tflite',
       );
 
-      // Prepare input
+      final inputTensor = interpreter.getInputTensor(0);
+      final inputType = inputTensor.type;
       final Uint8List rgbBytes =
           resizedImage.getBytes(order: img.ChannelOrder.rgb);
-      var input = rgbBytes.reshape([1, 224, 224, 3]);
+      final input = inputType == TensorType.float32
+          ? _buildFloatInput(rgbBytes)
+          : rgbBytes.reshape([1, 224, 224, 3]);
 
       // Prepare output
       final outputTensor = interpreter.getOutputTensor(0);
@@ -158,6 +161,12 @@ class _ResultsPageState extends State<ResultsPage>
           .where((l) => l.trim().isNotEmpty)
           .toList();
 
+      if (labels.length != classCount) {
+        throw Exception(
+          'Label count (${labels.length}) does not match model output ($classCount)',
+        );
+      }
+
       _disease = labels[predIdx].replaceAll('_', ' ').trim();
 
       // Load disease information
@@ -192,6 +201,22 @@ class _ResultsPageState extends State<ResultsPage>
         _isLoading = false;
       });
     }
+  }
+
+  List<List<List<List<double>>>> _buildFloatInput(Uint8List rgbBytes) {
+    int byteIndex = 0;
+    return [
+      List.generate(
+        224,
+        (_) => List.generate(
+          224,
+          (_) => List.generate(
+            3,
+            (_) => rgbBytes[byteIndex++] / 255.0,
+          ),
+        ),
+      ),
+    ];
   }
 
   Future<void> _applyTranslations() async {
